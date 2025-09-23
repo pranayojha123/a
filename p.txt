@@ -1,0 +1,101 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Student {
+    int rollNo;
+    String fullName;
+    float percentage;
+
+    Student(int rollNo, String fullName, float percentage) {
+        this.rollNo = rollNo;
+        this.fullName = fullName;
+        this.percentage = percentage;
+    }
+
+    void display() {
+        System.out.printf("Roll: %-4d Name: %-15s Marks: %.2f%n",
+                          rollNo, fullName, percentage);
+    }
+}
+
+public class StudentApp {
+    private static final ArrayList<Student> list = new ArrayList<>();
+    private static final Scanner input = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        boolean running = true;
+        while (running) {
+            printMenu();
+            String choice = input.nextLine().trim();
+
+            switch (choice) {
+                case "1" -> insertStudent();
+                case "2" -> showAll();
+                case "3" -> modifyStudent();
+                case "4" -> removeStudent();
+                case "0" -> { System.out.println("Goodbye!"); running = false; }
+                default -> System.out.println("❗ Invalid option");
+            }
+        }
+    }
+
+    private static void printMenu() {
+        System.out.println("\n=== Student Console ===");
+        System.out.println("[1] Add New");
+        System.out.println("[2] View All");
+        System.out.println("[3] Edit Details");
+        System.out.println("[4] Delete Record");
+        System.out.println("[0] Exit");
+        System.out.print("Choose: ");
+    }
+
+    private static void insertStudent() {
+        System.out.print("Roll Number : ");
+        int roll = Integer.parseInt(input.nextLine());
+        System.out.print("Full Name   : ");
+        String name = input.nextLine();
+        System.out.print("Marks (%)   : ");
+        float marks = Float.parseFloat(input.nextLine());
+
+        list.add(new Student(roll, name, marks));
+        System.out.println("✔ Student added!");
+    }
+
+    private static void showAll() {
+        if (list.isEmpty()) {
+            System.out.println("No records to display.");
+            return;
+        }
+        System.out.println("\n--- Student Records ---");
+        list.forEach(Student::display);
+    }
+
+    private static void modifyStudent() {
+        System.out.print("Enter roll to update: ");
+        int roll = Integer.parseInt(input.nextLine());
+
+        for (Student s : list) {
+            if (s.rollNo == roll) {
+                System.out.print("New Name (leave blank to keep): ");
+                String newName = input.nextLine();
+                if (!newName.isBlank()) s.fullName = newName;
+
+                System.out.print("New Marks (or press Enter to keep): ");
+                String markStr = input.nextLine();
+                if (!markStr.isBlank()) s.percentage = Float.parseFloat(markStr);
+
+                System.out.println("✔ Updated successfully!");
+                return;
+            }
+        }
+        System.out.println("Record not found.");
+    }
+
+    private static void removeStudent() {
+        System.out.print("Enter roll to delete: ");
+        int roll = Integer.parseInt(input.nextLine());
+
+        boolean removed = list.removeIf(s -> s.rollNo == roll);
+        System.out.println(removed ? "✔ Record removed." : "No match found.");
+    }
+}
